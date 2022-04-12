@@ -17,13 +17,13 @@ Content-Length:4\r\n\r
 Test"""
 
 r = Request()
-finished = r.feed_data(REQUEST)
+pret = r.feed_data(REQUEST)
 
 r,get_method() # returns b"POST"
 r.get_path() # returns b"/test"
 r.get_headers() # returns python dict {"User-Agent": "Test", "Host": "www.test.com", "Accept-Language": "en-us", "Content-Length": "4"}
-r.get_body() # returns b"Test"
 r.get_http_version() # returns "1.1"
+body = REQUEST[pret:]
 ```
 
 # Development

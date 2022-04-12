@@ -11,12 +11,7 @@ Request_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 Request_dealloc(RequestObject *obj)
 {
-    PyMem_Free(obj->pypath);
-    PyMem_Free(obj->pymethod);
-    PyMem_Free(obj->pybody);
-    PyMem_Free(obj->pyheaders);
-    PyMem_Free(obj->pyhttp_version);
-    free(obj->body);
+    Py_XDECREF(obj->pyheaders);
     Py_TYPE(obj)->tp_free((PyObject *)obj);
 }
 
@@ -52,10 +47,7 @@ Request_feed_data(RequestObject *self, PyObject *args, PyObject *kwds)
     if (self->pret > 0)
     {
         self->recalculate_py = true;
-        self->body = (char *)malloc(self->buflen - self->pret * sizeof(char));
-        strncpy(self->body, self->buf + self->pret, self->buflen - self->pret);
-        self->body_len = self->buflen - self->pret;
-        Py_RETURN_TRUE;
+        return PyLong_FromSize_t(self->pret);
     }
 
     else if (self->pret == -1)
@@ -108,16 +100,6 @@ Request_get_path(RequestObject *self)
 };
 
 static PyObject *
-Request_get_body(RequestObject *self)
-{
-    if (self->pybody == NULL || self->recalculate_py)
-    {
-        self->pybody = PyBytes_FromStringAndSize(self->body, self->body_len);
-    }
-    return self->pybody;
-};
-
-static PyObject *
 Request_get_headers(RequestObject *self)
 {
     if (self->pyheaders == NULL || self->recalculate_py)
@@ -128,6 +110,8 @@ Request_get_headers(RequestObject *self)
             PyObject *py_value = PyBytes_FromStringAndSize(self->headers[i].value, self->headers[i].value_len);
             PyObject *py_name = PyBytes_FromStringAndSize(self->headers[i].name, self->headers[i].name_len);
             PyDict_SetItem(self->pyheaders, py_name, py_value);
+            Py_DECREF(py_value);
+            Py_DECREF(py_name);
         }
     }
     return self->pyheaders;
@@ -154,8 +138,6 @@ static PyMethodDef Request_methods[] = {
      "feed_data docstring"},
     {"get_method", (PyCFunction)Request_get_method, METH_NOARGS,
      "get_method docstring"},
-    {"get_body", (PyCFunction)Request_get_body, METH_NOARGS,
-     "get_body docstring"},
     {"get_path", (PyCFunction)Request_get_path, METH_NOARGS,
      "get_path docstring"},
     {"get_headers", (PyCFunction)Request_get_headers, METH_NOARGS,

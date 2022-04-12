@@ -26,7 +26,6 @@ typedef struct
     PyObject_HEAD;
     PyObject *pypath;
     PyObject *pymethod;
-    PyObject *pybody;
     PyObject *pyheaders;
     PyObject *pyhttp_version;
 
@@ -35,7 +34,6 @@ typedef struct
 
     char buf[LIMIT_REQUEST_BUFFER];
     char *method, *path;
-    char *body;
     int pret, minor_version;
 
     struct phr_header headers[MAX_HEADERS];
