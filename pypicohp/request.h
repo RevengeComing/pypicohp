@@ -34,7 +34,7 @@ typedef struct
     bool chunked;
 
     char buf[LIMIT_REQUEST_BUFFER];
-    const char *method, *path;
+    char *method, *path;
     char *body;
     int pret, minor_version;
 

@@ -8,6 +8,18 @@ Request_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     return (PyObject *)self;
 }
 
+static void
+Request_dealloc(RequestObject *obj)
+{
+    PyMem_Free(obj->pypath);
+    PyMem_Free(obj->pymethod);
+    PyMem_Free(obj->pybody);
+    PyMem_Free(obj->pyheaders);
+    PyMem_Free(obj->pyhttp_version);
+    free(obj->body);
+    Py_TYPE(obj)->tp_free((PyObject *)obj);
+}
+
 static int
 Request_init(RequestObject *self, PyObject *args, PyObject *kwds)
 {
@@ -33,8 +45,8 @@ Request_feed_data(RequestObject *self, PyObject *args, PyObject *kwds)
     self->buflen += size;
 
     self->num_headers = MAX_HEADERS;
-    self->pret = phr_parse_request(self->buf, self->buflen, &(self->method),
-                                   &(self->method_len), &(self->path), &(self->path_len),
+    self->pret = phr_parse_request(self->buf, self->buflen, (const char **)&(self->method),
+                                   &(self->method_len), (const char **)&(self->path), &(self->path_len),
                                    &(self->minor_version), self->headers, &(self->num_headers), self->prevbuflen);
 
     if (self->pret > 0)
@@ -54,7 +66,6 @@ Request_feed_data(RequestObject *self, PyObject *args, PyObject *kwds)
 
     if (self->buflen == sizeof(self->buf))
     {
-        // TODO: RAISE ERROR RequestIsTooLongError
         PyErr_SetString(PyExc_Exception, "Request is too long.");
         return NULL;
     }
@@ -156,7 +167,7 @@ static PyMethodDef Request_methods[] = {
 
 static PyTypeObject RequestType = {
     PyVarObject_HEAD_INIT(NULL, 0)
-        .tp_name = "pypico.Request",
+        .tp_name = "pypicohp.Request",
     .tp_doc = "Request objects",
     .tp_basicsize = sizeof(RequestObject),
     .tp_itemsize = 0,
@@ -164,7 +175,7 @@ static PyTypeObject RequestType = {
     .tp_new = Request_new,
     .tp_init = (initproc)Request_init,
     // .tp_alloc = (allocfunc)Request_alloc, TODO: use freelist (?)
-    // .tp_dealloc = (destructor)Request_dealloc,
+    .tp_dealloc = (destructor)Request_dealloc,
     .tp_members = Request_members,
     .tp_methods = Request_methods,
 };
