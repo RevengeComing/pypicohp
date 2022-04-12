@@ -17,8 +17,6 @@
 #include "picohttpparser.h"
 #endif
 
-#define LIMIT_REQUEST_BUFFER 1024 * 18
-
 #define MAX_HEADERS 100
 
 typedef struct
@@ -32,7 +30,7 @@ typedef struct
     bool recalculate_py;
     bool chunked;
 
-    char buf[LIMIT_REQUEST_BUFFER];
+    char *buf;
     char *method, *path;
     int pret, minor_version;
 

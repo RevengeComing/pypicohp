@@ -12,6 +12,7 @@ static void
 Request_dealloc(RequestObject *obj)
 {
     Py_XDECREF(obj->pyheaders);
+    free(obj->buf);
     Py_TYPE(obj)->tp_free((PyObject *)obj);
 }
 
@@ -35,6 +36,11 @@ Request_feed_data(RequestObject *self, PyObject *args, PyObject *kwds)
         return NULL;
     }
 
+    self->buf = (char *)realloc(self->buf, sizeof(char) * (self->buflen + size + 1));
+    if (self->buflen == 0)
+    {
+        self->buf[0] = '\0';
+    }
     strcat(self->buf, data);
     self->prevbuflen = self->buflen;
     self->buflen += size;

@@ -10,7 +10,7 @@ ext_modules = [
 
 setup(
     name="pypicohp",
-    version='0.1.1',
+    version='0.1.3',
     author='Sepehr Hamzehlouy',
     author_email='s.hamzelooy@gmail.com',
     description='Python binding for picohttpparser.',
