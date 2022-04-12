@@ -31,4 +31,6 @@ test_upload:
 
 upload:
 	twine upload --repository pypi dist/*
-	
+
+test:
+	python -m unittest discover tests
