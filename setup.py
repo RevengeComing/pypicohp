@@ -1,4 +1,4 @@
-from distutils.core import Extension, setup
+from setuptools import setup, Extension
 
 
 ext_modules = [
@@ -10,9 +10,11 @@ ext_modules = [
 
 setup(
     name="pypicohp",
-    version='0.1',
+    version='0.1.1',
     author='Sepehr Hamzehlouy',
     author_email='s.hamzelooy@gmail.com',
     description='Python binding for picohttpparser.',
+    packages=['pypicohp'],
     ext_modules=ext_modules,
+    include_package_data=True,
 )

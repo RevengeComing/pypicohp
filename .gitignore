@@ -1,5 +1,7 @@
 *.so
 __pycache__/
 build/
+pypicohp.egg-info/
+dist/
 
 .vscode/

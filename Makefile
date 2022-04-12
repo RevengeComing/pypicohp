@@ -11,9 +11,24 @@ build: install_picohttpparser
 		-shared -o pypicohp/request.so pypicohp/request.c \
 		-L/usr/lib64 -lcrypt -lpthread -ldl  -lutil -lm -lm -l:picohttpparser.so
 
-install_picohttpparser:
+build_picohttpparser:
 	gcc -fPIC -shared -o pypicohp/picohttpparser.so pypicohp/picohttpparser.c
+
+install_picohttpparser: build_picohttpparser
 	mv pypicohp/picohttpparser.so /usr/lib64
 
 install:
 	python setup.py install
+
+clean:
+	rm -rf build dist pypicohp.egg-info
+
+sdist:
+	python setup.py sdist
+
+test_upload:
+	twine upload --repository testpypi dist/*
+
+upload:
+	twine upload --repository pypi dist/*
+	
