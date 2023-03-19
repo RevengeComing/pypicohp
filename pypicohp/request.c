@@ -58,12 +58,14 @@ Request_feed_data(RequestObject *self, PyObject *args, PyObject *kwds)
 
     else if (self->pret == -1)
     {
+        // TODO: raise specific type of exception
         PyErr_SetString(PyExc_Exception, "Parse Error.");
         return NULL;
     }
 
     if (self->buflen == sizeof(self->buf))
     {
+        // TODO: raise specific type of exception
         PyErr_SetString(PyExc_Exception, "Request is too long.");
         return NULL;
     }
@@ -168,16 +170,16 @@ static PyTypeObject RequestType = {
     .tp_methods = Request_methods,
 };
 
-static PyMethodDef ParserMethods[] = {
+static PyMethodDef RequestMethods[] = {
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
-static PyModuleDef parsermodule = {
+static PyModuleDef requestmodule = {
     PyModuleDef_HEAD_INIT,
     .m_name = "request",
     .m_doc = "Request module that creates an request type.",
     .m_size = -1,
-    ParserMethods,
+    RequestMethods,
 };
 
 PyMODINIT_FUNC
@@ -187,7 +189,7 @@ PyInit_request(void)
     if (PyType_Ready(&RequestType) < 0)
         return NULL;
 
-    m = PyModule_Create(&parsermodule);
+    m = PyModule_Create(&requestmodule);
     if (m == NULL)
         return NULL;
 

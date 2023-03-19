@@ -5,7 +5,7 @@
 #endif
 
 #ifndef PYTHON_H
-#define PY_SSIZE_T_CLEAN /* Make "s#" use Py_ssize_t rather than int. */
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #endif
 
